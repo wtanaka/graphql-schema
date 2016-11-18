@@ -67,4 +67,20 @@ library
   
   -- Base language which the package is written in.
   default-language:    Haskell98
-  
+
+test-suite graphql-schema-test
+  type: exitcode-stdio-1.0
+  ghc-options: -Wall
+  main-is: Spec.hs
+  hs-source-dirs: tests
+  build-depends: base
+               -- workaround https://github.com/kolmodin/binary/issues/121
+               , bytestring >= 0.10.4
+               , tasty
+               , tasty-hunit
+               , tasty-quickcheck
+               , tasty-smallcheck
+               , tasty-th
+               , graphql-schema
+               , QuickCheck
+  default-language: Haskell98
