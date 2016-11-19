@@ -1,11 +1,13 @@
 language: haskell
 ghc:
+#- 7.0
 - 7.4
 - 7.6
 - 7.8
-cabal:
-- cabal sandbox init
-- cabal update
+install:
+- make cabal-sandbox
+script:
+- make test haddock
 notifications:
   slack:
     secure: SXTOvOQ8xY6fuVfctOlB0Z9+ZFWF6cl4ePIQRKE7z63tXrZ21kF2zgkWD1IqoZXRbC9zotkf3K99g2cAWOciJTRo+UufGbIWuLdFaUx1ehCc/U0EZyu/EPGjBARn/vzBluAW5L2CaPeKNwQDkkg08frZUcMG4HGEy/19EK2M2sC9jH1FB3Ib8dP5cTbctHugDctzFWUxMamxQ6vWWey4SHRy593/Cp8RtUR1jx2MlsY0enABP6S6BlUg5GCLFZdLagjVv6KcBjJ6vR5fOB/dxLnOS+OF6fyVDv3/v33H5g9S/YDdQLsnpGxji1DTj3NnBOBJgLGjZ+R+Cl8hLK10immx1qrBWb9bVInS1XZxPXD9Js1QESyFO3WiRBPkB6bDCILyRSrgC5Ylyjq94hsz+2X+/EzDYUoyWAwLEUvSrrYmKDA/tQqKOHGY6Gp7UWCNaP//0AF/Truid/GcH1Gb87DaXU1k/H9QxoaU3QbWquP+wQflylw7YviwuOJpIDxSJKel6WMoR/DUMT3D4orKXHo1FJfHOsu7iZDkl22Em7vIsjSlEcCmITsWKsryBu7SLpdqZlGsuFWM+6SOj0fjlXNZhhmpuahwNSfM48WqPwz8NNt9vTU4WsL6xcosjCmIXJS8Uc5tizTi3XQb8IU+QvLzb0z6wxWzkkJlCGHN7f4=
