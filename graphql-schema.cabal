@@ -72,7 +72,7 @@ test-suite graphql-schema-test
   type: exitcode-stdio-1.0
   ghc-options: -Wall
   main-is: Spec.hs
-  hs-source-dirs: tests
+  hs-source-dirs: tests, src
   build-depends: base
                -- workaround https://github.com/kolmodin/binary/issues/121
                , bytestring >= 0.10.4
@@ -81,6 +81,5 @@ test-suite graphql-schema-test
                , tasty-quickcheck
                , tasty-smallcheck
                , tasty-th
-               , graphql-schema
                , QuickCheck
   default-language: Haskell98
