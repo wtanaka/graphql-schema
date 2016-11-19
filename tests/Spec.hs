@@ -6,11 +6,7 @@ import Test.Tasty.HUnit
 
 import Data.List
 
-main :: IO ()
-main = defaultMain tests
-
-tests :: TestTree
-tests = testGroup "Tests" [properties, unitTests]
+import qualified Text.GraphQLSchema.AST as AST
 
 properties :: TestTree
 properties = testGroup "Properties" [scProps, qcProps]
@@ -41,10 +37,62 @@ qcProps = testGroup "(checked by QuickCheck)"
 
 unitTests :: TestTree
 unitTests = testGroup "Unit tests"
-  [ testCase "List comparison (different length)" $
-      ([1, 2, 3] :: [Integer]) `compare` ([1,2] :: [Integer]) @?= GT
+  [ testCase "IntType equality" $
+      AST.IntType @?= AST.IntType
+
+   , testCase "FloatType equality" $
+      AST.FloatType @?= AST.FloatType
+
+   , testCase "BooleanType equality" $
+      AST.BooleanType @?= AST.BooleanType
+
+   , testCase "IDType equality" $
+      AST.IDType @?= AST.IDType
+
+   , testCase "StringType equality" $
+      AST.StringType @?= AST.StringType
+
+   , testCase "NonNull equality" $
+      AST.NonNull AST.StringType @?= AST.NonNull AST.StringType
+
+   , testCase "List equality" $
+      AST.ListType (AST.NonNull AST.FloatType) @?=
+      AST.ListType (AST.NonNull AST.FloatType)
+
+   , testCase "EnumValue equality" $
+      AST.EnumValue { AST.evName="", AST.evValue="1" } @?=
+      AST.EnumValue { AST.evName="", AST.evValue="1" }
+
+   , testCase "Enum equality" $
+      AST.EnumType { AST.enumName="", AST.enumValues=[] } @?=
+      AST.EnumType { AST.enumName="", AST.enumValues=[] }
+
+   , testCase "ObjectField equality" $
+      AST.ObjectField { AST.fieldName="", AST.fieldType=AST.StringType } @?=
+      AST.ObjectField { AST.fieldName="", AST.fieldType=AST.StringType }
+
+--   , testCase "PersonType example" $
+--       Object ObjectFields {
+--          objName = "Person",
+--          objFields = [
+--             ObjectField {
+--                fieldName = "name",
+--                fieldType = String
+--             },
+--             ObjectField {
+--                fieldName = "bestFriend",
+--                fieldType = String
+--             }
+--          ]
+--       }
 
   -- the following test does not hold
   --, testCase "List comparison (same length)" $
   --    [1, 2, 3] `compare` [1,2,2] @?= LT
   ]
+
+tests :: TestTree
+tests = testGroup "Tests" [properties, unitTests]
+
+main :: IO ()
+main = defaultMain tests
