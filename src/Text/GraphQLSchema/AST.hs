@@ -20,40 +20,33 @@
 module Text.GraphQLSchema.AST
    (
       Type(..),
+      EnumValue(..),
       ObjectField(..),
-      ObjectFields(..),
-      EnumValueDefinition(..),
-      EnumTypeConfig(..),
    ) where
 
-data Type = String
-   | Boolean
-   | Float
-   | ID
-   | Int
-   | List Type
-   | Object ObjectFields
-   | Enum EnumTypeConfig
+data Type = IntType
+   | FloatType
+   | StringType
+   | BooleanType
+   | IDType
    | NonNull Type
-   deriving (Eq,Show,Read)
+   | ListType Type
+   | EnumType {
+      enumName :: String,
+      enumValues :: [EnumValue]
+   }
+   | ObjectType {
+      objName :: String,
+      objFields :: [ObjectField]
+   }
+   deriving (Show,Read,Eq)
+
+data EnumValue = EnumValue {
+   evName :: String,
+   evValue :: String
+   } deriving (Show,Read,Eq)
 
 data ObjectField = ObjectField {
    fieldName :: String,
    fieldType :: Type
-   } deriving (Show,Read,Eq)
-
-data ObjectFields = ObjectFields {
-   name :: String,
-   description :: String,
-   fields :: [ObjectField] }
-   deriving (Show,Read,Eq)
-
-data EnumValueDefinition = EnumValueDefinition {
-   enumItemName :: String,
-   enumItemValue :: Int
-   } deriving (Show,Read,Eq)
-
-data EnumTypeConfig = EnumTypeConfig {
-   enumName :: String,
-   enumValues :: [EnumValueDefinition]
    } deriving (Show,Read,Eq)
