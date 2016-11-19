@@ -6,8 +6,6 @@ import Test.Tasty.HUnit
 
 import Data.List
 
--- import Text.GraphQLSchema.AST
-
 main :: IO ()
 main = defaultMain tests
 
