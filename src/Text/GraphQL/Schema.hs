@@ -17,13 +17,24 @@
 -- You should have received a copy of the GNU General Public License
 -- along with graphqlschema.  If not, see <http://www.gnu.org/licenses/>.
 
-module Text.GraphQLSchema.AST
+{-|
+Module: Text.GraphQL.Schema
+Description: Support for GraphQL Schema
+Copyright: (C) Wesley Tanaka <http://wtanaka.com/>, 2016
+License: GPL-2
+Stability: experimental
+Portability: POSIX
+
+Toy support for a subset of GraphQL schema
+-}
+module Text.GraphQL.Schema
    (
       Type(..),
       EnumValue(..),
       ObjectField(..),
    ) where
 
+-- |A GraphQL type
 data Type = IntType
    | FloatType
    | StringType
@@ -41,11 +52,13 @@ data Type = IntType
    }
    deriving (Show,Read,Eq)
 
+-- |A single enum value (a pair of a string and a value)
 data EnumValue = EnumValue {
    evName :: String,
    evValue :: String
    } deriving (Show,Read,Eq)
 
+-- |A single field on an object
 data ObjectField = ObjectField {
    fieldName :: String,
    fieldType :: Type

@@ -6,7 +6,7 @@ import Test.Tasty.HUnit
 
 import Data.List
 
-import qualified Text.GraphQLSchema.AST as AST
+import qualified Text.GraphQL.Schema as AST
 
 properties :: TestTree
 properties = testGroup "Properties" [scProps, qcProps]
