@@ -5,6 +5,11 @@ all: package
 test: cabal-install build
 	cabal configure --enable-tests && cabal build && cabal test
 
+lint:
+	hlint .
+
+.cabal-sandbox/bin/hlint: .cabal-sandbox/bin/happy
+
 clean:
 	find . -name "*~" -exec rm \{\} \;
 	rm -rf dist
@@ -17,7 +22,7 @@ package: cabal-install haddock build
 haddock: cabal-install
 	cabal haddock
 
-.cabal-sandbox/bin/%: .cabal-sandbox
+.cabal-sandbox/bin/%: cabal.sandbox.config
 	cabal install $*
 
 build: $(SOURCES)
@@ -26,7 +31,7 @@ build: $(SOURCES)
 cabal-install: cabal-sandbox
 	cabal install --only-dependencies --enable-tests
 
-cabal-sandbox: .cabal-sandbox
+cabal-sandbox: cabal.sandbox.config
 
 .cabal-sandbox cabal.sandbox.config:
 	cabal sandbox init
