@@ -5,6 +5,10 @@ all: package
 test: cabal-install build
 	cabal configure --enable-tests && cabal build && cabal test
 
+lint:
+	cabal install hlint
+	hlint .
+
 clean:
 	find . -name "*~" -exec rm \{\} \;
 	rm -rf dist
