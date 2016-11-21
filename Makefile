@@ -36,3 +36,9 @@ cabal-sandbox: cabal.sandbox.config
 .cabal-sandbox cabal.sandbox.config:
 	cabal sandbox init
 	cabal update
+
+%.hs: %.x .cabal-sandbox/bin/alex
+	.cabal-sandbox/bin/alex $<
+
+%.hs: %.y .cabal-sandbox/bin/happy
+	.cabal-sandbox/bin/happy $<
