@@ -60,8 +60,10 @@ library
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.3 && <4.9
-  
+  build-depends:
+    base >=4.3 && <4.9
+    , language-python >= 0.5.2
+
   -- Directories containing source files.
   hs-source-dirs:      src
   
@@ -76,6 +78,8 @@ test-suite graphql-schema-test
   build-depends: base
                -- workaround https://github.com/kolmodin/binary/issues/121
                , bytestring >= 0.10.4
+               , language-python >= 0.5.2
+               , semigroups <= 0.18.1
                , tasty
                , tasty-hunit
                , tasty-quickcheck

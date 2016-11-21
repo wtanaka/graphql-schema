@@ -16,6 +16,7 @@ clean:
 
 realclean: clean
 	cabal sandbox delete
+	rm -rf alex-sandbox
 
 package: cabal-install haddock build
 
@@ -31,8 +32,8 @@ build: $(SOURCES)
 cabal-configure:
 	cabal configure --enable-tests
 
-cabal-install: cabal-sandbox
-	cabal install --only-dependencies --enable-tests
+cabal-install: cabal-sandbox alex-sandbox/.cabal-sandbox/bin/alex
+	env PATH="alex-sandbox/.cabal-sandbox/bin:$$PATH" cabal install --only-dependencies --enable-tests
 
 cabal-sandbox: cabal.sandbox.config
 
@@ -40,8 +41,15 @@ cabal-sandbox: cabal.sandbox.config
 	cabal sandbox init
 	cabal update
 
-%.hs: %.x
-	alex $<
+alex-sandbox/cabal.sandbox.config:
+	mkdir alex-sandbox
+	(cd alex-sandbox; cabal sandbox init; cabal update)
+
+alex-sandbox/.cabal-sandbox/bin/%: alex-sandbox/cabal.sandbox.config
+	(cd alex-sandbox; cabal install $*)
+
+%.hs: %.x alex-sandbox/.cabal-sandbox/bin/alex
+	alex-sandbox/.cabal-sandbox/bin/alex $<
 
 %.hs: %.y
 	happy $<
