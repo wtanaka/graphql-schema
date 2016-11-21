@@ -1,12 +1,18 @@
 language: haskell
 ghc:
 #- 7.0
-- 7.4
+# language-python and template-haskell do not play well together in
+# 7.4
+#- 7.4
 - 7.6
-- 7.8
+# Runs into problem with alex:
+# Couldn't match expected type 'Bool' with actual type 'Int#'
+#- 7.8
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -y hlint alex happy
+- alex --version
+- happy --version
 install:
 - make cabal-sandbox
 script:
