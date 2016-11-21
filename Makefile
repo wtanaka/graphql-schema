@@ -2,8 +2,8 @@ SOURCES=$(shell find src -name "*.hs")
 
 all: package
 
-test: cabal-install build
-	cabal configure --enable-tests && cabal build && cabal test
+test: cabal-install cabal-configure build
+	cabal test
 
 lint:
 	hlint .
@@ -19,7 +19,7 @@ realclean: clean
 
 package: cabal-install haddock build
 
-haddock: cabal-install
+haddock: cabal-install cabal-configure
 	cabal haddock
 
 .cabal-sandbox/bin/%: cabal.sandbox.config
@@ -27,6 +27,9 @@ haddock: cabal-install
 
 build: $(SOURCES)
 	cabal build
+
+cabal-configure:
+	cabal configure --enable-tests
 
 cabal-install: cabal-sandbox
 	cabal install --only-dependencies --enable-tests
@@ -37,8 +40,8 @@ cabal-sandbox: cabal.sandbox.config
 	cabal sandbox init
 	cabal update
 
-%.hs: %.x .cabal-sandbox/bin/alex
-	.cabal-sandbox/bin/alex $<
+%.hs: %.x
+	alex $<
 
-%.hs: %.y .cabal-sandbox/bin/happy
-	.cabal-sandbox/bin/happy $<
+%.hs: %.y
+	happy $<
