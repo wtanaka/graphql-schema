@@ -1,6 +1,6 @@
 SOURCES=$(shell find src -name "*.hs")
 
-all: package
+all: lint test package
 
 test: cabal-install cabal-configure build
 	cabal test
