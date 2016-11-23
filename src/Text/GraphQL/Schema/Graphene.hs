@@ -71,21 +71,33 @@ wrap outer inner = PY.Call {
 
 grapheneType :: GQ.Type -> PY.Expr PY.SrcSpan
 grapheneType GQ.BooleanType = call $ grapheneDot $ ident "Boolean"
-grapheneType (GQ.EnumType GQ.EnumDef {
-   GQ.enumName = en,
-   GQ.enumValues = evs
-}) = call $ grapheneDot $ ident "TODOENUM"
 grapheneType GQ.FloatType = call $ grapheneDot $ ident "Float"
 grapheneType GQ.IDType = call $ grapheneDot $ ident "ID"
 grapheneType GQ.IntType = call $ grapheneDot $ ident "Int"
 grapheneType (GQ.ListType x) = wrap (call $ grapheneDot $ ident "List") (grapheneType x)
 grapheneType (GQ.NonNull x) = wrap (call $ grapheneDot $ ident "NonNull") (grapheneType x)
-grapheneType GQ.ObjectType {
-   GQ.objName = on,
-   GQ.objFields = ofs
-} = call $ grapheneDot $ ident "TODOOBJ"
 grapheneType GQ.StringType = call $ grapheneDot $ ident "String"
 
+grapheneTypeDef :: GQ.TypeDef -> PY.Statement PY.SrcSpan
+grapheneTypeDef GQ.ObjectType {
+   GQ.objName = on,
+   GQ.objFields = ofs
+   } = PY.Class {
+      PY.class_name = ident on,
+      PY.class_args = argList [grapheneDot $ ident "ObjectType"],
+      PY.class_body = classBody ofs,
+      PY.stmt_annot = PY.SpanEmpty
+      }
+grapheneTypeDef (GQ.EnumType GQ.EnumDef {
+      GQ.enumName = enumName,
+      GQ.enumValues = enumValues
+      }) =
+      PY.Class {
+         PY.class_name = ident enumName,
+         PY.class_args = argList [grapheneDot $ ident "Enum"],
+         PY.class_body = enumClassBody enumValues,
+         PY.stmt_annot = PY.SpanEmpty
+      }
 
 pyField :: GQ.ObjectField -> PY.Statement PY.SrcSpan
 pyField objF = PY.Assign {
@@ -97,15 +109,35 @@ pyField objF = PY.Assign {
 classBody :: [GQ.ObjectField] -> [PY.Statement PY.SrcSpan]
 classBody = map pyField
 
-render :: GQ.Type -> String
-render GQ.ObjectType {GQ.objName = on, GQ.objFields = ofs} =
-   PY.prettyText $ PY.Module [PY.Class {
-      PY.class_name = ident on,
-      PY.class_args = [PY.ArgExpr {
-         PY.arg_expr = grapheneDot $ ident "ObjectType",
-         PY.arg_annot = PY.SpanEmpty
-      }],
-      PY.class_body = classBody ofs,
-      PY.stmt_annot = PY.SpanEmpty
-      }]
-render _ = "import graphene"
+grapheneVal :: GQ.EvVal -> PY.Expr PY.SrcSpan
+grapheneVal (GQ.EvStr s) = PY.Strings {
+   PY.strings_strings = [s],
+   PY.expr_annot = PY.SpanEmpty
+}
+grapheneVal (GQ.EvInt i) = PY.Int { PY.int_value = i,
+   -- TODO: Questionable
+   PY.expr_literal = show i,
+   PY.expr_annot = PY.SpanEmpty
+}
+
+pyEnumField :: GQ.EnumValue -> PY.Statement PY.SrcSpan
+pyEnumField eV = PY.Assign {
+   PY.assign_to = [var $ GQ.evName eV],
+   PY.assign_expr = grapheneVal $ GQ.evValue eV,
+   PY.stmt_annot = PY.SpanEmpty
+}
+
+enumClassBody :: [GQ.EnumValue] -> [PY.Statement PY.SrcSpan]
+enumClassBody = map pyEnumField
+
+argList :: [PY.Expr PY.SrcSpan] -> [PY.Argument PY.SrcSpan]
+argList = foldr
+   (\ x -> (:) PY.ArgExpr{PY.arg_expr = x, PY.arg_annot = PY.SpanEmpty})
+   ([] :: [PY.Argument PY.SrcSpan])
+
+listify :: a -> [a]
+listify a = [a]
+
+render :: GQ.TypeDef -> String
+render = PY.prettyText . PY.Module . listify . grapheneTypeDef
+-- render _ = "import graphene"

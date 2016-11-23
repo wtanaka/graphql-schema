@@ -61,8 +61,8 @@ unitTests = testGroup "Unit tests"
       GQ.ListType (GQ.NonNull GQ.FloatType)
 
    , testCase "EnumValue equality" $
-      GQ.EnumValue { GQ.evName="", GQ.evValue="1" } @?=
-      GQ.EnumValue { GQ.evName="", GQ.evValue="1" }
+      GQ.EnumValue { GQ.evName="", GQ.evValue=GQ.EvStr "1" } @?=
+      GQ.EnumValue { GQ.evName="", GQ.evValue=GQ.EvStr "1" }
 
    , testCase "Enum equality" $
       GQ.EnumType GQ.EnumDef { GQ.enumName="", GQ.enumValues=[] } @?=
@@ -107,6 +107,30 @@ unitTests = testGroup "Unit tests"
       "    a_float = graphene.Float()\n" ++
       "    a_int = graphene.Int()\n" ++
       "    a_bool = graphene.Boolean()")
+
+   , testCase "Graphene Enum" $
+      Graphene.render (GQ.EnumType GQ.EnumDef {
+         GQ.enumName = "Episode",
+         GQ.enumValues = [
+            GQ.EnumValue{
+               GQ.evName = "NEWHOPE",
+               GQ.evValue = GQ.EvInt 4
+            },
+            GQ.EnumValue{
+               GQ.evName = "EMPIRE",
+               GQ.evValue = GQ.EvInt 5
+            },
+            GQ.EnumValue{
+               GQ.evName = "JEDI",
+               GQ.evValue = GQ.EvInt 6
+            }
+         ]
+      })
+      @?=
+      ("class Episode(graphene.Enum):\n" ++
+      "    NEWHOPE = 4\n" ++
+      "    EMPIRE = 5\n" ++
+      "    JEDI = 6")
 
 --   , testCase "PersonType example" $
 --       Object ObjectFields {

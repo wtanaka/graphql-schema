@@ -29,11 +29,13 @@ Toy support for a subset of GraphQL schema
 -}
 module Text.GraphQL.Schema
    (
-      Type(..),
-      EnumValue(..),
       EnumDef(..),
       EnumLib(..),
+      EnumValue(..),
+      EvVal(..),
       ObjectField(..),
+      Type(..),
+      TypeDef(..),
    ) where
 
 -- |A GraphQL type
@@ -44,7 +46,11 @@ data Type = IntType
    | IDType
    | NonNull Type
    | ListType Type
-   | EnumType EnumDef
+   deriving (Show,Read,Eq)
+
+-- |A standalone GraphQL type
+data TypeDef
+   = EnumType EnumDef
    | ObjectType {
       objName :: String,
       objFields :: [ObjectField]
@@ -63,9 +69,14 @@ data EnumDef = EnumDef {
 
 -- |A single enum value (a pair of a string and a value)
 data EnumValue = EnumValue {
-   evName :: String,
-   evValue :: String
-   } deriving (Show,Read,Eq)
+      evName :: String,
+      evValue :: EvVal
+   }
+   deriving (Show,Read,Eq)
+
+-- |Either Integer or String
+data EvVal = EvStr String | EvInt Integer
+   deriving (Show,Read,Eq)
 
 -- |A single field on an object
 data ObjectField = ObjectField {

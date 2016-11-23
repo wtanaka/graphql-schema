@@ -11,7 +11,9 @@ lint:
 .cabal-sandbox/bin/hlint: .cabal-sandbox/bin/happy
 
 clean:
-	find . -name "*~" -exec rm \{\} \;
+	find . \( -name "*~" \
+		-o -name "*.pyc" \
+		\) -exec rm \{\} \;
 	rm -rf dist
 
 realclean: clean
