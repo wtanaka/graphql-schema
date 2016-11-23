@@ -6,7 +6,8 @@ import Test.Tasty.HUnit
 
 import Data.List
 
-import qualified Text.GraphQL.Schema as AST
+import qualified Text.GraphQL.Schema as GQ
+import qualified Text.GraphQL.Schema.Graphene as Graphene
 
 properties :: TestTree
 properties = testGroup "Properties" [scProps, qcProps]
@@ -38,38 +39,74 @@ qcProps = testGroup "(checked by QuickCheck)"
 unitTests :: TestTree
 unitTests = testGroup "Unit tests"
   [ testCase "IntType equality" $
-      AST.IntType @?= AST.IntType
+      GQ.IntType @?= GQ.IntType
 
    , testCase "FloatType equality" $
-      AST.FloatType @?= AST.FloatType
+      GQ.FloatType @?= GQ.FloatType
 
    , testCase "BooleanType equality" $
-      AST.BooleanType @?= AST.BooleanType
+      GQ.BooleanType @?= GQ.BooleanType
 
    , testCase "IDType equality" $
-      AST.IDType @?= AST.IDType
+      GQ.IDType @?= GQ.IDType
 
    , testCase "StringType equality" $
-      AST.StringType @?= AST.StringType
+      GQ.StringType @?= GQ.StringType
 
    , testCase "NonNull equality" $
-      AST.NonNull AST.StringType @?= AST.NonNull AST.StringType
+      GQ.NonNull GQ.StringType @?= GQ.NonNull GQ.StringType
 
    , testCase "List equality" $
-      AST.ListType (AST.NonNull AST.FloatType) @?=
-      AST.ListType (AST.NonNull AST.FloatType)
+      GQ.ListType (GQ.NonNull GQ.FloatType) @?=
+      GQ.ListType (GQ.NonNull GQ.FloatType)
 
    , testCase "EnumValue equality" $
-      AST.EnumValue { AST.evName="", AST.evValue="1" } @?=
-      AST.EnumValue { AST.evName="", AST.evValue="1" }
+      GQ.EnumValue { GQ.evName="", GQ.evValue="1" } @?=
+      GQ.EnumValue { GQ.evName="", GQ.evValue="1" }
 
    , testCase "Enum equality" $
-      AST.EnumType { AST.enumName="", AST.enumValues=[] } @?=
-      AST.EnumType { AST.enumName="", AST.enumValues=[] }
+      GQ.EnumType GQ.EnumDef { GQ.enumName="", GQ.enumValues=[] } @?=
+      GQ.EnumType GQ.EnumDef { GQ.enumName="", GQ.enumValues=[] }
 
    , testCase "ObjectField equality" $
-      AST.ObjectField { AST.fieldName="", AST.fieldType=AST.StringType } @?=
-      AST.ObjectField { AST.fieldName="", AST.fieldType=AST.StringType }
+      GQ.ObjectField { GQ.fieldName="", GQ.fieldType=GQ.StringType } @?=
+      GQ.ObjectField { GQ.fieldName="", GQ.fieldType=GQ.StringType }
+
+   , testCase "Graphene Render Smoke" $
+      Graphene.render GQ.ObjectType {
+         GQ.objName = "MyObj",
+         GQ.objFields = [GQ.ObjectField{
+               GQ.fieldName = "first_name",
+               GQ.fieldType = GQ.StringType
+            }]
+      }
+      @?=
+      ("class MyObj(graphene.ObjectType):\n" ++
+      "    first_name = graphene.String()")
+
+   , testCase "Graphene Render Full" $
+      Graphene.render GQ.ObjectType {
+         GQ.objName = "MyObj",
+         GQ.objFields = [
+            GQ.ObjectField{
+               GQ.fieldName = "a_float",
+               GQ.fieldType = GQ.FloatType
+            },
+            GQ.ObjectField{
+               GQ.fieldName = "a_int",
+               GQ.fieldType = GQ.IntType
+            },
+            GQ.ObjectField{
+               GQ.fieldName = "a_bool",
+               GQ.fieldType = GQ.BooleanType
+            }
+         ]
+      }
+      @?=
+      ("class MyObj(graphene.ObjectType):\n" ++
+      "    a_float = graphene.Float()\n" ++
+      "    a_int = graphene.Int()\n" ++
+      "    a_bool = graphene.Boolean()")
 
 --   , testCase "PersonType example" $
 --       Object ObjectFields {

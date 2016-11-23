@@ -63,6 +63,7 @@ library
   build-depends:
     base >=4.3 && <4.9
     , language-python >= 0.5.2
+    , lens == 4.8
 
   -- Directories containing source files.
   hs-source-dirs:      src
@@ -79,11 +80,12 @@ test-suite graphql-schema-test
                -- workaround https://github.com/kolmodin/binary/issues/121
                , bytestring >= 0.10.4
                , language-python >= 0.5.2
+               , lens == 4.8
+               , QuickCheck
                , semigroups <= 0.18.1
                , tasty
                , tasty-hunit
                , tasty-quickcheck
                , tasty-smallcheck
                , tasty-th
-               , QuickCheck
   default-language: Haskell98

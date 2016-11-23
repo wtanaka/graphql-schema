@@ -31,6 +31,8 @@ module Text.GraphQL.Schema
    (
       Type(..),
       EnumValue(..),
+      EnumDef(..),
+      EnumLib(..),
       ObjectField(..),
    ) where
 
@@ -42,15 +44,22 @@ data Type = IntType
    | IDType
    | NonNull Type
    | ListType Type
-   | EnumType {
-      enumName :: String,
-      enumValues :: [EnumValue]
-   }
+   | EnumType EnumDef
    | ObjectType {
       objName :: String,
       objFields :: [ObjectField]
    }
    deriving (Show,Read,Eq)
+
+-- |Library of all enums
+newtype EnumLib = EnumLib [EnumDef]
+   deriving (Show,Read,Eq)
+
+-- |An Enum definition
+data EnumDef = EnumDef {
+   enumName :: String,
+   enumValues :: [EnumValue]
+   } deriving (Show,Read,Eq)
 
 -- |A single enum value (a pair of a string and a value)
 data EnumValue = EnumValue {
