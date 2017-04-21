@@ -10,6 +10,10 @@ lint:
 
 .cabal-sandbox/bin/hlint: .cabal-sandbox/bin/happy
 
+lint:
+	cabal install hlint
+	hlint .
+
 clean:
 	find . -name "*~" -exec rm \{\} \;
 	rm -rf dist
